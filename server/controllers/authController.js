@@ -13,19 +13,20 @@ export const register = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.json({ success: false, message: "All fields are required" });
     }
 
     const existUser = await User.findOne({ $or: [{ username }, { email }] });
 
     if (existUser) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Username or Email already exists" });
+      return res.json({
+        success: false,
+        message: "Username or Email already exists",
+      });
     }
 
     if (password.length < 6 || password.length > 20) {
-      return res.status(400).json({
+      return res.json({
         success: false,
         message: "Password must be between 6 and 20 characters",
       });
@@ -42,9 +43,9 @@ export const register = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    res.status(201).json({ success: true, token, user });
+    res.json({ success: true, token, user });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 };
 

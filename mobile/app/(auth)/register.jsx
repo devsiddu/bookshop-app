@@ -24,7 +24,7 @@ export default function Register() {
 
   const router = useRouter();
 
-  const { axios, isLoading, setIsLoading } = useAppContext();
+  const { axios, isLoading, setIsLoading, user, token } = useAppContext();
 
   const handleRegister = async () => {
     setIsLoading(true);
@@ -42,8 +42,6 @@ export default function Register() {
         Alert.alert("Error", data.message);
         setIsLoading(false);
       }
-      console.log("User :" + data.user);
-      console.log("Token :" + data.token);
     } catch (error) {
       setIsLoading(false);
       console.log("Error:", error.message);

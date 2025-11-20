@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import axios from "axios";
 
 export default function Create() {
   const [title, setTitle] = useState("");
@@ -50,7 +51,6 @@ export default function Create() {
         });
 
         if (!result.canceled) {
-          console.log(result);
           setImage(result.assets[0].uri);
 
           if (result.assets[0].base64) {
@@ -83,7 +83,28 @@ export default function Create() {
         ? `image/${fileType.toLowerCase()}`
         : "image/jpeg";
       const imageDataUrl = `data:${imageType};base64,${imageBase64}`;
-    } catch (error) {}
+
+      const { data } = await axios.post("/api/books", {
+        title,
+        caption,
+        image: imageDataUrl,
+        rating,
+      });
+
+      if (data.success) {
+        Alert.alert("Success", data.message || "Book Posted!");
+        setTitle("");
+        setCaption("");
+        setRating(3);
+        setImage(null);
+        setImageBase64(null);
+        router.push("/");
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderRatingPicker = () => {

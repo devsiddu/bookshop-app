@@ -13,8 +13,7 @@ import React, { useState } from "react";
 import COLORS from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useAppContext } from "../../context/AppContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useStore } from "../../store/useStore";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -22,29 +21,12 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const router = useRouter();
-
-  const { axios, isLoading, setIsLoading, user, token } = useAppContext();
+  const { router, register, isLoading } = useStore();
 
   const handleRegister = async () => {
-    setIsLoading(true);
-    try {
-      const { data } = await axios.post("/api/auth/register", {
-        username,
-        email,
-        password,
-      });
-      if (data.success) {
-        await AsyncStorage.setItem("user", JSON.stringify(data.user));
-        await AsyncStorage.setItem("token", JSON.stringify(data.token));
-        setIsLoading(false);
-      } else {
-        Alert.alert("Error", data.message);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      setIsLoading(false);
-      console.log("Error:", error.message);
+    const result = await register(username, email, password);
+    if (!result.success) {
+      Alert.alert("Error", result.message);
     }
   };
 

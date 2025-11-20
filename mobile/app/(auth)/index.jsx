@@ -15,35 +15,17 @@ import IMAGE from "../../constants/images";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
 import { Link } from "expo-router";
-import { useAppContext } from "../../context/AppContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useStore } from "../../store/useStore";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { axios, isLoading, setIsLoading, user, token, router } =
-    useAppContext();
+  const { isLoading, login } = useStore();
 
   const handleLogin = async () => {
-    setIsLoading(true);
-    try {
-      const { data } = await axios.post("/api/auth/login", { email, password });
-
-      if (data.success) {
-        await AsyncStorage.setItem("user", data.user);
-        await AsyncStorage.setItem("token", data.token);
-        router.back();
-        setIsLoading(false);
-      } else {
-        Alert.alert("Error", data.message);
-        console.log("login error:" + data.message);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.log("login server error:" + error.message);
-      setIsLoading(false);
-    }
+    const reslut = await login(email, password);
+    if (!reslut.success) Alert.alert("Error", reslut.message);
   };
 
   return (

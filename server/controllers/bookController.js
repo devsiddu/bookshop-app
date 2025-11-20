@@ -6,9 +6,7 @@ export const books = async (req, res) => {
     const { title, caption, rating, image } = req.body;
 
     if (!title || !caption || !rating || !image) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
+      return res.json({ success: false, message: "All fields are required" });
     }
 
     const uploadResult = await cloudinary.uploader.upload(image);
@@ -24,13 +22,9 @@ export const books = async (req, res) => {
 
     await book.save();
 
-    res
-      .status(201)
-      .json({ success: true, message: "Book added successfully", book });
+    res.json({ success: true, message: "Book added successfully", book });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server Error" + error.message });
+    res.json({ success: false, message: "Server Error" + error.message });
   }
 };
 
@@ -55,7 +49,7 @@ export const getBooks = async (req, res) => {
       totalPages: Math.ceil(totalBooks / limit),
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 };
 
@@ -64,23 +58,17 @@ export const deleteBook = async (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Book ID is required" });
+      return res.json({ success: false, message: "Book ID is required" });
     }
 
     const book = await Book.findById(id);
 
     if (!book) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Book not found" });
+      return res.json({ success: false, message: "Book not found" });
     }
 
     if (book.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Unauthorized action" });
+      return res.json({ success: false, message: "Unauthorized action" });
     }
 
     //delete image from cloudinary
@@ -91,11 +79,9 @@ export const deleteBook = async (req, res) => {
 
     await book.deleteOne();
 
-    res
-      .status(200)
-      .json({ success: true, message: "Book deleted successfully" });
+    res.json({ success: true, message: "Book deleted successfully" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 };
 
@@ -106,6 +92,6 @@ export const getUserBooks = async (req, res) => {
 
     res.send({ success: true, books });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.json({ success: false, message: error.message });
   }
 };

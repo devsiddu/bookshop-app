@@ -27,7 +27,7 @@ export default function Create() {
   const [imageBase64, setImageBase64] = useState(null);
   const [loading, setLoading] = useState(null);
 
-  const { router } = useStore();
+  const { router, token } = useStore();
 
   const pickImage = async () => {
     try {
@@ -84,12 +84,20 @@ export default function Create() {
         : "image/jpeg";
       const imageDataUrl = `data:${imageType};base64,${imageBase64}`;
 
-      const { data } = await axios.post("/api/books", {
-        title,
-        caption,
-        image: imageDataUrl,
-        rating,
-      });
+      const { data } = await axios.post(
+        "/api/books",
+        {
+          title,
+          caption,
+          image: imageDataUrl,
+          rating,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (data.success) {
         Alert.alert("Success", data.message || "Book Posted!");
@@ -99,6 +107,9 @@ export default function Create() {
         setImage(null);
         setImageBase64(null);
         router.push("/");
+        setLoading(false);
+      } else {
+        console.log(data.message);
         setLoading(false);
       }
     } catch (error) {

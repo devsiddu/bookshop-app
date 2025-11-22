@@ -3,12 +3,12 @@ import React from "react";
 import { useStore } from "../../store/useStore";
 
 export default function Home() {
-  const { user, token } = useStore();
+  const { user, token, logout } = useStore();
   return (
     <View>
-      <TouchableOpacity>
-        <Text>{user?.username}</Text>
-        <Text>{token}</Text>
+      <Text>{user?.username}</Text>
+      <Text>{token}</Text>
+      <TouchableOpacity onPress={logout}>
         <Text>Logout</Text>
       </TouchableOpacity>
     </View>

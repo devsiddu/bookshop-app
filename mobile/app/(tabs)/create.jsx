@@ -99,10 +99,10 @@ export default function Create() {
         setImage(null);
         setImageBase64(null);
         router.push("/");
+        setLoading(false);
       }
     } catch (error) {
       console.log(error.message);
-    } finally {
       setLoading(false);
     }
   };

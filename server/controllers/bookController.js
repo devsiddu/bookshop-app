@@ -24,7 +24,7 @@ export const books = async (req, res) => {
 
     res.json({ success: true, message: "Book added successfully", book });
   } catch (error) {
-    res.json({ success: false, message: "Server Error" + error.message });
+    res.status(500).json({ success: false, message: `Server Error: ${error.message}` });
   }
 };
 
